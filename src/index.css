@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "segoeuithibd";
+    src: url("font/segoeuithibd.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "inherit";
+    src: url("font/Inheritance.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
