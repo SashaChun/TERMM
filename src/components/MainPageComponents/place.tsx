@@ -3,10 +3,10 @@ const Place = ({ place }) => {
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-[30px] flex font-bold text-black text-center">
+            <h1 className="text-[20px] sm:text-[30px] flex font-bold text-black text-center">
                 Місце проведення конференції
             </h1>
-            <div className="text-[20px] mt-5 flex flex-col items-center text-[#212529]">
+            <div className="text-[12px] sm:text-[20px] mt-5 flex flex-col items-center text-[#212529]">
 
                 {place && place.map((event, index) => (
                     <p key={index}>

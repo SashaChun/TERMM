@@ -48,30 +48,32 @@ const universityLogos = [
 
 
 const Organizers = () => {
-    return <div className={'bg-white'}>
-        <div className={'flex justify-center'} >
-            <img
-                className="w-[300px] h-[200px] rounded-[20px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                src={monPhoto}
-                alt="universityLogos"
-            />
-            <img
-                className="w-[300px] h-[200px] rounded-[10px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                src={logolntu}
-                alt="universityLogos"
-            />
+    return (
+        <div className="bg-white py-0 sm:py-10">
+            <div className="flex justify-center gap-4 sm:gap-8 flex-wrap mb-10">
+                <img
+                    className="w-[250px] sm:w-[300px] h-[150px] sm:h-[200px] rounded-[20px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
+                    src={monPhoto}
+                    alt="universityLogos"
+                />
+                <img
+                    className="w-[250px] sm:w-[300px] h-[150px] sm:h-[200px] rounded-[10px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
+                    src={logolntu}
+                    alt="universityLogos"
+                />
+            </div>
+            <div className="p-5 flex flex-wrap justify-center gap-0 sm:gap-8">
+                {universityLogos.map((logo, index) => (
+                    <img
+                        className="w-[120px] sm:w-[140px] h-[120px] sm:h-[140px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
+                        src={logo}
+                        key={index}
+                        alt="universityLogos"
+                    />
+                ))}
+            </div>
         </div>
-        <div className={'p-5 flex flex-wrap  justify-center gap-8'}>
-        {universityLogos.map((logo, index) => (
-            <img
-                className="w-[140px] h-[140px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                src={logo}
-                key={index}
-                alt="universityLogos"
-            />
+    );
+};
 
-        ))}
-    </div></div>
-}
-
-export default Organizers
+export default Organizers;

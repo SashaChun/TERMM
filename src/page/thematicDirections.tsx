@@ -2,6 +2,7 @@ import { BsPen } from "react-icons/bs";
 import ContentPlace from "../components/ContentPlace.tsx";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
+import Loader from "../components/Loading.tsx";
 
 const fetchThematicDirections = async () => {
     const response = await client.getEntries({ content_type: "thematic-directions" });
@@ -14,7 +15,8 @@ const ThematicDirections = () => {
         queryFn: fetchThematicDirections,
     });
 
-    if (isLoading) return <div>Завантаження...</div>;
+
+    if (isLoading) return <Loader/>;
     if (error instanceof Error) return <div>Помилка: {error.message}</div>;
 
     return (
@@ -25,7 +27,7 @@ const ThematicDirections = () => {
                         {directions.map((direction) => (
                             <div key={direction.sys.id} className="flex items-center space-x-2 mt-5 mb-2">
                                 <BsPen className="w-5 shrink-0 text-blue-600" />
-                                <p className="text-gray-800">{direction.fields.thematicDirectionsTitle}</p>
+                                <p className="text-gray-800 text-[15px] sm:text-[20px]">{direction.fields.thematicDirectionsTitle}</p>
                             </div>
                         ))}
                     </div>

@@ -6,6 +6,7 @@ import ContentPlace from "../components/ContentPlace.tsx";
 import Line from "../components/Line.tsx";
 import {useQuery} from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
+import Loader from "../components/Loading.tsx";
 
 const MainPage = () => {
 
@@ -21,6 +22,7 @@ const MainPage = () => {
                 return acc;
             }, {});
 
+
             return response.items.map((event) => ({
                 sliderPics: event.fields.sliderPics?.map((pic) => assetMap[pic.sys.id]) || [],
                 places: event.fields.places || "",
@@ -31,6 +33,7 @@ const MainPage = () => {
 
 
     console.log(data)
+    if (isLoading) return <Loader/>;
 
     return (
         <>
@@ -41,14 +44,14 @@ const MainPage = () => {
                     </div>
                     <hr className="w-full border-t border-gray-300 my-10"/>
                     <Place place={data}/>
-                    <div className={'px-52 mt-10'}>
+                    <div className={'  mt-10'}>
                         <Map/>
                     </div>
-                    <div className={'px-52 mt-10'}>
+                    <div className={'  mt-10'}>
                         <Map/>
                     </div>
                     <Line/>
-                    <div className={'text-[20px] flex justify-center items-center p-5 text-justify text-[#212529]'}>
+                    <div className={'text-[12px] sm:text-[20px] flex justify-center items-center p-5 text-justify text-[#212529]'}>
                         {data && data.map((event, index) => (<p key={index}>
                             {event.meta}
                         </p>))}

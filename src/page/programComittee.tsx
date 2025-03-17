@@ -2,6 +2,7 @@ import ContentPlace from "../components/ContentPlace.tsx";
 import { IoLocationSharp } from "react-icons/io5";
 import {useQuery} from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
+import Loader from "../components/Loading.tsx";
 
 
 const ProgramComittee = () => {
@@ -14,6 +15,7 @@ const ProgramComittee = () => {
         },
     });
 
+    if (isLoading) return <Loader/>;
     console.log(data)
 
     return (
@@ -21,7 +23,7 @@ const ProgramComittee = () => {
             <ContentPlace>
                 <section className="flex flex-col items-center">
                     <h1 className="text-[25px] text-[#212529] font-[500]">Програмний комітет</h1>
-                    <div className="p-4 bg-gray-100 text-[#212529] text-[18px]">
+                    <div className="p-4 bg-gray-100 text-[#212529] text-[12px] md:text-[18px]">
                         {data && data.map((professor, index) => (
                             <div key={index} className="flex items-center space-x-2 mt-5 mb-2">
                                 <IoLocationSharp className="w-5 shrink-0"/>

@@ -5,6 +5,7 @@ import lebedevPhoto from '../assets/funders/lebedev.jpg'
 import bozhydarnykPhoto from '../assets/funders/bozhydarnyk.jpg'
 import {useQuery} from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
+import Loader from "../components/Loading.tsx";
 
 export default  function Funders(){
 
@@ -43,12 +44,13 @@ export default  function Funders(){
 
     console.log(data)
 
+    if (isLoading) return <Loader/>;
     return <div className={'flex justify-center'}>
         <ContentPlace>
             <section className={'flex items-center text-[#212529]  flex-col mt-8'}>
-                <h1 className={'text-[30px] text-center mx-auto font-[segoeuithibd]'}>Ініціаторами проведення конференції у зазначеному
+                <h1 className={'text-[20px] sm:text-[30px] text-center mx-auto font-[segoeuithibd]'}>Ініціаторами проведення конференції у зазначеному
                     форматі виступили:</h1>
-                <div className={'text-[22px] mt-3 text-center mx-auto font-[500]'}>
+                <div className={'text-[18px] sm:text-[22px] mt-3 text-center mx-auto font-[500]'}>
                     {data?.map((event, index) => (
                         <span className={'flex flex-row space-x-2'} key={index}>
                     <p>{event.name}</p>{index < data.length - 1 && ", "}
@@ -57,9 +59,9 @@ export default  function Funders(){
                 </div>
                 <div>
                     {data?.map((event) => (
-                        <div className={'flex flex-row mt-10 items-center space-x-5'}>
-                            <img className={'w-[270px] h-[400px]  '} src={event.photo} alt='photo'/>
-                            <p className={"flex justify-between text-[18px] items-center w-full"}>{event.description}</p>
+                        <div className={'flex sm:flex-row flex-col mt-10 items-center space-x-5'}>
+                            <img className={'sm:w-[270px] sm:h-[400px] w-[200px] h-[280px]   '} src={event.photo} alt='photo'/>
+                            <p className={"flex justify-between text-[15px] mt-3 sm:text-[18px] items-center w-full"}>{event.description}</p>
                         </div>
                     ))}
                 </div>

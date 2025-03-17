@@ -39,7 +39,7 @@ const OrganizationalCommittee = () => {
                 <Line/>
                 <div>
                     <h1 className={'text-[30px] text-center  font-[500] mt-5 '}>Організаційний комітет</h1>
-                    <div className={'flex flex-row justify-center mt-5 space-x-20'}>
+                    <div className={'flex md:flex-row justify-center items-center flex-col  mt-5 space-x-0 md:space-x-20'}>
                         <div className={'flex items-center flex-col'}>
                             <img className={'w-[250px] mt-5'} src={OlenaLutakPhoto} alt="Viktorrud"/>
                             <h3 className={'text-[18px] mt-2'}>д.е.н., професор Олена Лютак</h3>

@@ -39,6 +39,16 @@ export default function Menu() {
         },
         { name: "Тематичні напрямки", path: "/thematic-directions" },
         { name: "Реєстрація", path: "/registration" },
+        {
+            name: "Вимоги до публікацій",
+            items: [
+                { name: " Інформаційні партнери", path: "/info-partners" },
+                { name: "Вимоги до оформлення тез", path: "/requirements-theses" },
+                { name: "Збірник TERMM-2023", path: "/path/to/TERMM-2023.pdf", download: true },
+            ],
+        },
+        { name: "Платіжна інформація", path: "/pay-info" },
+
     ];
 
     return (
@@ -58,11 +68,11 @@ export default function Menu() {
                         onMouseLeave={() => setOpenMenu(null)}
                     >
                         {!item.items ? (
-                            <Link to={item.path} className="text-[16px] relative">
+                            <Link to={item.path} className="xl:text-[16px] md:text-[12px]   relative">
                                 {item.name}
                             </Link>
                         ) : (
-                            <span className="text-[16px] cursor-pointer">{item.name}</span>
+                            <span className="xl:text-[16px] md:text-[12px]   cursor-pointer">{item.name}</span>
                         )}
 
                         {item.items && openMenu === index && (
@@ -74,9 +84,19 @@ export default function Menu() {
                                         onMouseEnter={() => subItem.path === "/history" && setOpenSubMenu(subIndex)}
                                         onMouseLeave={() => subItem.path === "/history" && setOpenSubMenu(null)}
                                     >
-                                        <Link to={subItem.path} className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]">
-                                            {subItem.name}
-                                        </Link>
+                                        {subItem.download ? (
+                                            <a
+                                                href={subItem.path}
+                                                download
+                                                className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]"
+                                            >
+                                                {subItem.name}
+                                            </a>
+                                        ) : (
+                                            <Link to={subItem.path} className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]">
+                                                {subItem.name}
+                                            </Link>
+                                        )}
                                         {subItem.path === "/history" && openSubMenu === subIndex && subItem.items && (
                                             <div className="absolute left-full top-0 flex flex-col bg-[#3b3c93] pb-1 text-white rounded-md shadow-md w-max min-w-[150px]">
                                                 {subItem.items.map((nestedItem, nestedIndex) => (
@@ -98,7 +118,6 @@ export default function Menu() {
                 ))}
             </ul>
 
-            {/* Мобільне меню */}
             {mobileMenuOpen && (
                 <ul className="md:hidden flex flex-col bg-[#3b3c93] p-4 text-white absolute top-full left-0 w-full z-50">
                     {textData.map((item, index) => (
@@ -116,9 +135,19 @@ export default function Menu() {
                                         <ul className="pl-4">
                                             {item.items.map((subItem, subIndex) => (
                                                 <li key={subIndex} className="py-1">
-                                                    <Link to={subItem.path} onClick={() => setMobileMenuOpen(false)}>
-                                                        {subItem.name}
-                                                    </Link>
+                                                    {subItem.download ? (
+                                                        <a
+                                                            href={subItem.path}
+                                                            download
+                                                            className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]"
+                                                        >
+                                                            {subItem.name}
+                                                        </a>
+                                                    ) : (
+                                                        <Link to={subItem.path} onClick={() => setMobileMenuOpen(false)}>
+                                                            {subItem.name}
+                                                        </Link>
+                                                    )}
                                                     {subItem.items && (
                                                         <ul className="pl-4">
                                                             {subItem.items.map((nestedItem, nestedIndex) => (

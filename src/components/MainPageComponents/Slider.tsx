@@ -6,46 +6,46 @@ const Slider = ({ photo }) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            nextSlide();
+            setIndex((prevIndex) => (prevIndex + 1) % (photo?.[0]?.sliderPics.length || 1));
         }, 10000);
 
         return () => clearInterval(interval);
-    }, [index]);
+    }, [photo]);
 
-    const nextSlide = () => {
+    const nextSlide = (e) => {
+        e.preventDefault();
         setIndex((prevIndex) => (prevIndex + 1) % (photo?.[0]?.sliderPics.length || 1));
     };
 
-    const prevSlide = () => {
+    const prevSlide = (e) => {
+        e.preventDefault();
         setIndex((prevIndex) => (prevIndex - 1 + (photo?.[0]?.sliderPics.length || 1)) % (photo?.[0]?.sliderPics.length || 1));
     };
 
-    // Отримуємо URL з photo
-    const imgSrc = photo?.[0]?.sliderPics?.[index]?.url || "";
-
     return (
-        <div className="relative h-[550px] w-[85%] mt-16 overflow-hidden">
+        <div className="relative h-[200px]  sm:h-[550px]  w-[85%] mt-16 overflow-hidden">
             <AnimatePresence>
                 <motion.img
-                    key={imgSrc}
-                    src={imgSrc}
-                    className="w-full h-[550px] object-cover"
+                    key={photo?.[0]?.sliderPics?.[index]?.url}
+                    src={photo?.[0]?.sliderPics?.[index]?.url || ""}
+                    className="w-full h-[200px]  sm:h-[550px] object-cover"
                     alt={`Slide ${index + 1}`}
-                    initial={{ opacity: 0, backgroundColor: "white" }}
-                    animate={{ opacity: 1, backgroundColor: "transparent" }}
-                    exit={{ opacity: 0, backgroundColor: "white" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
+                    style={{ position: "absolute", top: 0 }}
                 />
             </AnimatePresence>
             <button
                 onClick={prevSlide}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 p-1 shadow-lg"
+                className="absolute sm:block hidden left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 p-1 shadow-lg"
             >
                 ◀
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 p-1 shadow-lg"
+                className="absolute sm:block hidden right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 p-1 shadow-lg"
             >
                 ▶
             </button>

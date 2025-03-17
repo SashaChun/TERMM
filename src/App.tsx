@@ -1,67 +1,47 @@
-// App.tsx
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import MainPage from './page/MainPage';
-import ManagementTeam from './page/managementTeam';
-import ProgramComittee from './page/programComittee';
-import OrganizationalCommittee from './page/organizationalCommittee';
+import { lazy, Suspense } from "react";
 import Layout from './Layout.tsx';
-import HisrtoryPage from "./page/historyPge.tsx";
-import ThematicDirections from "./page/thematicDirections.tsx";
-import Funders from "./page/Funders.tsx";
-import InfoPartners from "./page/infoPartners.tsx";
-import RequirementsTheses from "./page/requirementsTheses.tsx";
+import Loader from "./components/Loading.tsx";
+
+const MainPage = lazy(() => import('./page/MainPage'));
+const ManagementTeam = lazy(() => import('./page/managementTeam'));
+const ProgramComittee = lazy(() => import('./page/programComittee'));
+const OrganizationalCommittee = lazy(() => import('./page/organizationalCommittee'));
+const HisrtoryPage = lazy(() => import("./page/historyPge"));
+const ThematicDirections = lazy(() => import("./page/thematicDirections"));
+const Funders = lazy(() => import("./page/Funders"));
+const InfoPartners = lazy(() => import("./page/infoPartners"));
+const RequirementsTheses = lazy(() => import("./page/requirementsTheses"));
+const ImportantDates = lazy(() => import("./page/ImportantDates"));
+const PayInfo = lazy(() => import("./page/payInfo"));
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { path: "/", element: <MainPage /> },
+            { path: "/management-team", element: <ManagementTeam /> },
+            { path: "/program-comittee", element: <ProgramComittee /> },
+            { path: "/organizational-committee", element: <OrganizationalCommittee /> },
+            { path: "/history/:historyPart", element: <HisrtoryPage /> }, // Оновлено параметр
+            { path: "/history/funders", element: <Funders /> },
+            { path: "/info-partners", element: <InfoPartners /> },
+            { path: "/thematic-directions", element: <ThematicDirections /> },
+            { path: "/requirements-theses", element: <RequirementsTheses /> },
+            { path: "/important-dates", element: <ImportantDates /> },
+            { path: "/pay-info", element: <PayInfo /> },
+        ],
+    },
+]);
 
 function App() {
-    const router = createBrowserRouter([
-        {
-            path: "/",
-            element: <Layout />,
-            children: [
-                {
-                    path: "/",
-                    element: <MainPage />,
-                },
-                {
-                    path: "/management-team",
-                    element: <ManagementTeam />,
-                },
-                {
-                    path: "/program-comittee",
-                    element: <ProgramComittee/>,
-                },
-                {
-                    path: "/organizational-committee",
-                    element: <OrganizationalCommittee />,
-                },
-                {
-                    path : "/history",
-                    children: [
-                        {
-                            path: "/history:historyPart",
-                            element : <HisrtoryPage/>,
-                        },
-                        {
-                            path: "/history/funders",
-                            element : <Funders/>,
-                        },
-                    ]
-                },
-                {
-                    path: "/info-partners",
-                    element: <InfoPartners/>,
-                },{
-                    path: "/thematic-directions",
-                    element: <ThematicDirections />,
-                },{
-                    path: "/requirements-theses",
-                    element: <RequirementsTheses/>,
-                },
-            ],
-        },
-    ]);
-
-    return <RouterProvider router={router} />;
+    return (
+        <Suspense fallback={<Loader />}>
+            <RouterProvider router={router} />
+        </Suspense>
+    );
 }
 
 export default App;
