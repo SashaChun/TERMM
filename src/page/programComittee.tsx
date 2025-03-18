@@ -26,7 +26,7 @@ const ProgramComittee = () => {
                     <div className="p-4 bg-gray-100 text-[#212529] text-[12px] md:text-[18px]">
                         {data && data.map((professor, index) => (
                             <div key={index} className="flex items-center space-x-2 mt-5 mb-2">
-                                <IoLocationSharp className="w-5 shrink-0"/>
+                                <IoLocationSharp className="w-5 text-blue-800 shrink-0"/>
                                 <p className="text-gray-800">{professor}</p>
                             </div>
                         ))}

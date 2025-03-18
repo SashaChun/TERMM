@@ -68,7 +68,7 @@ export default function Menu() {
                         onMouseLeave={() => setOpenMenu(null)}
                     >
                         {!item.items ? (
-                            <Link to={item.path} className="xl:text-[16px] md:text-[12px]   relative">
+                            <Link to={item.path} className="xl:text-[16px]   md:text-[12px]   relative">
                                 {item.name}
                             </Link>
                         ) : (

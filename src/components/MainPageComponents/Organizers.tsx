@@ -21,6 +21,9 @@ import tohoku from '../../assets/organizers/tohoku.png';
 import ughorodskyiNU from '../../assets/organizers/UghorodskyiNU.jpg';
 import umt from '../../assets/organizers/umt.jpg';
 import vntu from '../../assets/organizers/VNTU.jpg';
+import {useQuery} from "@tanstack/react-query";
+import client from "../../../contentfulClient.tsx";
+import Loader from "../Loading.tsx";
 
 const universityLogos = [
     aztuEdu,
@@ -48,28 +51,52 @@ const universityLogos = [
 
 
 const Organizers = () => {
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['organizerssang'],
+        queryFn: async () => {
+            const response = await client.getEntries({ content_type: "organizerssang" });
+
+            return response.items.map((item) => {
+                const photoId = item.fields.photo?.[0]?.sys?.id;
+                const photo = response.includes?.Asset?.find(asset => asset.sys.id === photoId);
+                const photoUrl = photo ? `https:${photo.fields.file.url}` : null;
+
+                return {
+                    link: item.fields.link,
+                    photo: photoUrl,
+                };
+            });
+        },
+    });
+    console.log(data)
+
+    const reverData = data && [...data].reverse();
+
+    if (isLoading) return <Loader/>;
     return (
         <div className="bg-white py-0 sm:py-10">
             <div className="flex justify-center gap-4 sm:gap-8 flex-wrap mb-10">
-                <img
+                <a href={data && reverData[1].link}> <img
                     className="w-[250px] sm:w-[300px] h-[150px] sm:h-[200px] rounded-[20px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                    src={monPhoto}
+                    src={data && reverData[1].photo}
                     alt="universityLogos"
-                />
-                <img
-                    className="w-[250px] sm:w-[300px] h-[150px] sm:h-[200px] rounded-[10px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                    src={logolntu}
+                /></a>
+                <a href={data && reverData[0].link}> <img
+                    className="w-[250px] sm:w-[300px] h-[150px] sm:h-[200px] rounded-[20px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
+                    src={data && reverData[0].photo}
                     alt="universityLogos"
-                />
+                /></a>
             </div>
             <div className="p-5 flex flex-wrap justify-center gap-0 sm:gap-8">
-                {universityLogos.map((logo, index) => (
-                    <img
-                        className="w-[120px] sm:w-[140px] h-[120px] sm:h-[140px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
-                        src={logo}
-                        key={index}
-                        alt="universityLogos"
-                    />
+                {data && reverData.reverse()?.slice(0, -2).map((logo, index) => (
+                    <a href={logo.link} key={index}>
+                        <img
+                            className="w-[120px] sm:w-[140px] h-[120px] sm:h-[140px] p-5 border-2 border-transparent hover:border-gray-400 hover:shadow-xl transition-all duration-300 ease-in-out"
+                            src={logo.photo}
+                            alt="universityLogos"
+                        />
+                    </a>
                 ))}
             </div>
         </div>

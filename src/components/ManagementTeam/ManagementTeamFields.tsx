@@ -1,23 +1,29 @@
 import {useQuery} from "@tanstack/react-query";
 import client from "../../../contentfulClient.tsx";
+import Loader from "../Loading.tsx";
 
 const ManagementTeamFields = () => {
     const { data, error, isLoading } = useQuery({
         queryKey: ['managementteam-capitan'],
         queryFn: async () => {
-            const response = await client.getEntries({ content_type: "managementteam" });
+            const response = await client.getEntries({ content_type: "Chairman-conference" });
             return response.items.map((item) => {
-                const person = item.fields.item.fields;
-                const name = person.name.content[0].content[0].value;
-                const specialization = person.specialixatio; // Assuming it's correct
-                const photoId = person.photo[0].sys.id;
-                const photo = response.includes.Asset.find(asset => asset.sys.id === photoId)?.fields.file.url;
+                const person = item.fields; // Дані знаходяться без вкладеного item.fields.item.fields
+                const name = person.pib; // Прямий доступ до поля pib
+                const specialization = person.description; // Прямий доступ до опису
+                const photoId = person.photo[0].sys.id; // Отримання ID фото
+
+                // Знаходимо URL фото у includes.Asset
+                const photo = response.includes?.Asset.find(asset => asset.sys.id === photoId)?.fields.file.url;
+
                 return { name, specialization, photo };
             });
         },
     });
 
-    if (isLoading) return <div>Loading...</div>;
+
+
+    if (isLoading) return <Loader/>;
     if (error) return <div>Error: {error.message}</div>;
 
     console.log(data)
