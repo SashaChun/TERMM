@@ -4,10 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
 import Loader from "../components/Loading.tsx";
 
-const HisrtoryPage = () => {
+const HistoryPage = () => {
     const location = useLocation();
     const segments = location.pathname.split("/").filter(Boolean);
-    const lastSegment = segments[segments.length - 1]; // останній сегмент URL
+    const lastSegment = segments[segments.length - 1];
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['historys'],
@@ -17,25 +17,27 @@ const HisrtoryPage = () => {
         },
     });
 
+    if (isLoading) return <Loader/>;
+    if (error instanceof Error) return <div>Не вдалося завантажити дані: {error.message}</div>;
 
-    if (isLoading) return <Loader/>;    if (error instanceof Error) return <div>Не вдалося завантажити дані: {error.message}</div>;
+    const filteredConference = data?.filter(
+        conference => conference.fields.id === parseInt(lastSegment)
+    ) || [];
 
-    // Фільтрація конференцій за id
-    const filterConferencesById = (conferences, id) => {
-        return conferences.filter(conference => conference.fields.id === parseInt(id));
+    const resp = filteredConference.length > 0 ? filteredConference[0].fields : null;
+
+    const renderDescription = (description) => {
+        return description?.content.map((block, index) => (
+            <div key={index}>
+                {block.nodeType === "heading-5" && (
+                    <h5 className="text-xl font-bold">{block.content[0]?.value}</h5>
+                )}
+                {block.nodeType === "paragraph" && (
+                    <p className="text-base mt-2">{block.content[0]?.value}</p>
+                )}
+            </div>
+        ));
     };
-
-    const filteredConference = filterConferencesById(data, lastSegment); // Фільтрація конференцій по id
-
-    const descriptions = filteredConference.map((event) => {
-        return {
-            title: event.fields.title,
-            data: event.fields.data,
-            img: event.fields.photo?.map(photo => photo.fields.file.url) || []
-        };
-    });
-
-    const resp = descriptions.length > 0 ? descriptions[0] : null; // Перевірка на наявність даних
 
     return (
         <div className="flex justify-center">
@@ -48,14 +50,17 @@ const HisrtoryPage = () => {
                         <p className="text-[20px] flex items-center mt-2 font-semibold text-[#212529] text-center mx-auto">
                             {resp?.data || "Дані відсутні"}
                         </p>
+                        <div className="mt-4 text-[25px] flex items-center mt-2 font-semibold text-[#212529] text-center mx-auto">
+                            {renderDescription(resp?.description)}
+                        </div>
                         <div className="flex items-center flex-col mt-10">
-                            {resp?.img.length > 0 ? (
-                                resp.img.map((imageSrc, imgIndex) => (
+                            {resp?.photo?.length > 0 ? (
+                                resp.photo.map((photo, imgIndex) => (
                                     <img
                                         key={imgIndex}
-                                        src={imageSrc}
+                                        src={photo.fields.file.url}
                                         alt={`Зображення ${imgIndex + 1}`}
-                                        className="w-[600px] h-[250px] md:h-[480px]  mt-10 object-cover shadow"
+                                        className="w-[600px] h-[250px] md:h-[480px] mt-10 object-cover shadow"
                                     />
                                 ))
                             ) : (
@@ -67,6 +72,6 @@ const HisrtoryPage = () => {
             </ContentPlace>
         </div>
     );
-}
+};
 
-export default HisrtoryPage;
+export default HistoryPage;

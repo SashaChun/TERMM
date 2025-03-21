@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy, Suspense } from "react";
 import Layout from './Layout.tsx';
 import Loader from "./components/Loading.tsx";
+import ConferenceProgram from "./page/conferenceProgram.tsx";
 
 const MainPage = lazy(() => import('./page/MainPage'));
 const ManagementTeam = lazy(() => import('./page/managementTeam'));
@@ -32,6 +33,8 @@ const router = createBrowserRouter([
             { path: "/requirements-theses", element: <RequirementsTheses /> },
             { path: "/important-dates", element: <ImportantDates /> },
             { path: "/pay-info", element: <PayInfo /> },
+            { path: "/important-dates", element: <ImportantDates /> },
+            { path: "/conference-program", element: <ConferenceProgram /> },
         ],
     },
 ]);

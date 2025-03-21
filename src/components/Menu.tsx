@@ -20,6 +20,27 @@ export default function Menu() {
         },
     });
 
+    const { data: download , error } = useQuery({
+        queryKey: ["file"],
+        queryFn: async () => {
+            const response = await client.getEntries({ content_type: "file" });
+
+            // Дістаємо URL першого файлу, якщо він є
+            const fileUrl = response.includes?.Asset[0]?.fields?.file?.url;
+            return fileUrl ? `https:${fileUrl}` : null;
+        },
+    });
+
+    const { data: registr  } = useQuery({
+        queryKey: ["registr"],
+        queryFn: async () => {
+            const response = await client.getEntries({ content_type: "registr" });
+            return response.items[0].fields.form
+        },
+    });
+
+    console.log(registr)
+
     const textData = [
         { name: "Головна", path: "/" },
         {
@@ -38,17 +59,18 @@ export default function Menu() {
             ],
         },
         { name: "Тематичні напрямки", path: "/thematic-directions" },
-        { name: "Реєстрація", path: "/registration" },
+        { name: "Реєстрація", path: registr },
         {
             name: "Вимоги до публікацій",
             items: [
                 { name: " Інформаційні партнери", path: "/info-partners" },
                 { name: "Вимоги до оформлення тез", path: "/requirements-theses" },
-                { name: "Збірник TERMM-2023", path: "/path/to/TERMM-2023.pdf", download: true },
+                { name: "Збірник TERMM-2023", path: download, download: true },
             ],
         },
         { name: "Платіжна інформація", path: "/pay-info" },
-
+        { name: "Важливі дати", path: "/important-dates" },
+        { name: "Конференційні програми", path: "/conference-program" },
     ];
 
     return (
@@ -98,7 +120,7 @@ export default function Menu() {
                                             </Link>
                                         )}
                                         {subItem.path === "/history" && openSubMenu === subIndex && subItem.items && (
-                                            <div className="absolute left-full top-0 flex flex-col bg-[#3b3c93] pb-1 text-white rounded-md shadow-md w-max min-w-[150px]">
+                                            <div className="absolute left-full top-0 flex flex-col bg-[#3b3c93] pb-1 text-white rounded-md shadow-md w-max min-w-[150px] z-50">
                                                 {subItem.items.map((nestedItem, nestedIndex) => (
                                                     <Link
                                                         key={nestedIndex}

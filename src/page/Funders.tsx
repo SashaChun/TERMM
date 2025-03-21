@@ -6,6 +6,8 @@ import bozhydarnykPhoto from '../assets/funders/bozhydarnyk.jpg'
 import {useQuery} from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
 import Loader from "../components/Loading.tsx";
+import Line from '../components/Line.tsx'
+import MainFunders from "../components/FundersComponents/MainFunders.tsx";
 
 export default  function Funders(){
 
@@ -65,7 +67,10 @@ export default  function Funders(){
                         </div>
                     ))}
                 </div>
+                <Line/>
+                <MainFunders/>
             </section>
+
         </ContentPlace>
     </div>
 }
