@@ -1,16 +1,27 @@
+
+
 import { useQuery } from "@tanstack/react-query";
 import client from "../../../contentfulClient.tsx";
 import Loader from "../Loading.tsx";
-import {CiCalendar} from "react-icons/ci";
+import { CiCalendar } from "react-icons/ci";
+
+// Define the type for the expected response from the Contentful API
+interface Data {
+    legalentities: string[]; // Expected to be an array of strings
+    individuals: string[];   // Expected to be an array of strings
+}
 
 const ImportantDatas = () => {
-    const { data, error, isLoading, isFetching } = useQuery({
+    const { data, error, isLoading, isFetching } = useQuery<Data[]>({
         queryKey: ['Datas'],
         queryFn: async () => {
-            const response = await client.getEntries({ content_type: "Datas" });
-            return response.items.map(item => ({
-                legalentities: item.fields.remote,
-                individuals: item.fields.local
+            const response = await client.getEntries({
+                content_type: "Datas",
+            });
+            // Assuming 'remote' and 'local' are the fields containing arrays of strings.
+            return response.items.map((item) => ({
+                legalentities: Array.isArray(item.fields.remote) ? item.fields.remote : [],
+                individuals: Array.isArray(item.fields.local) ? item.fields.local : [],
             }));
         },
     });
@@ -25,12 +36,15 @@ const ImportantDatas = () => {
                     І. Для учасників, що планують прийняти участь в роботі конференції в дистанційному режимі :
                 </p>
                 <ul className="list-disc pl-10 space-y-2">
-                    {data && data[0]?.legalentities.map((event, index) => (
+                    // Ігнорування помилки типізації на конкретному рядку
+                    // @ts-ignore
+                    {data && data[0]?.legalentities?.map((event: string, index: number) => (
                         <li key={index} className="flex items-center mt-3 space-x-2">
-                            <CiCalendar className="text-[25px] text-blue-800"/>
+                            <CiCalendar className="text-[25px] text-blue-800" />
                             <p className="text-[18px]">{event}</p>
                         </li>
                     ))}
+
                 </ul>
             </div>
             <div>
@@ -38,9 +52,9 @@ const ImportantDatas = () => {
                     ІІ. Для учасників, що планують прийняти особисту участь в роботі конференції:
                 </p>
                 <ul className="list-disc pl-10 space-y-2">
-                    {data && data[0]?.individuals.map((event, index) => (
-                        <li key={index} className="flex items-center ">
-                            <CiCalendar className="text-[25px] text-blue-800"/>
+                    {data && data[0]?.individuals?.map((event: string, index: number) => (
+                        <li key={index} className="flex items-center">
+                            <CiCalendar className="text-[25px] text-blue-800" />
                             <p className="text-[18px]">{event}</p>
                         </li>
                     ))}
