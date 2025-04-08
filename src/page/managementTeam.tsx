@@ -1,8 +1,6 @@
 import { FC } from "react";
 import ContentPlace from "../components/ContentPlace.tsx";
 import Line from "../components/Line.tsx";
-import { useQuery } from "@tanstack/react-query";
-import client from "../../contentfulClient.tsx";
 import ManagementTeamFields from "../components/ManagementTeamComponents/ManagementTeamFields.tsx";
 import Conferencechair from "../components/ManagementTeamComponents/Conferencechair.tsx";
 

@@ -18,13 +18,18 @@ const ImportantDatas = () => {
             const response = await client.getEntries({
                 content_type: "Datas",
             });
-            // Assuming 'remote' and 'local' are the fields containing arrays of strings.
+
             return response.items.map((item) => ({
-                legalentities: Array.isArray(item.fields.remote) ? item.fields.remote : [],
-                individuals: Array.isArray(item.fields.local) ? item.fields.local : [],
+                legalentities: Array.isArray(item.fields.remote)
+                    ? item.fields.remote.filter((el): el is string => typeof el === 'string')
+                    : [],
+                individuals: Array.isArray(item.fields.local)
+                    ? item.fields.local.filter((el): el is string => typeof el === 'string')
+                    : [],
             }));
         },
     });
+
 
     if (isLoading || isFetching) return <Loader />;
     if (error) return <p>Error loading data</p>;
@@ -38,12 +43,10 @@ const ImportantDatas = () => {
                 <ul className="list-disc pl-10 space-y-2">
                     // Ігнорування помилки типізації на конкретному рядку
                     // @ts-ignore
-                    {data && data[0]?.legalentities?.map((event: string, index: number) => (
-                        <li key={index} className="flex items-center mt-3 space-x-2">
-                            <CiCalendar className="text-[25px] text-blue-800" />
-                            <p className="text-[18px]">{event}</p>
-                        </li>
+                    {data && data.length > 0 && data[0]?.legalentities?.map((event: string, index: number) => (
+                        <div key={index}>{event}</div>
                     ))}
+
 
                 </ul>
             </div>

@@ -4,9 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
 import { IoMenu, IoClose } from "react-icons/io5";
 
+// Типізація для елементів меню
+type MenuItem = {
+    name: string;
+    path: string | null;
+    items?: MenuItem[];
+    download?: boolean;
+};
+
 export default function Menu() {
-    const [openMenu, setOpenMenu] = useState(null);
-    const [openSubMenu, setOpenSubMenu] = useState(null);
+    const [openMenu, setOpenMenu] = useState<number | null>(null);
+    const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const { data: titles = [], isLoading } = useQuery({
@@ -14,37 +22,36 @@ export default function Menu() {
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "history" });
             return response.items.map(item => ({
-                name: item.fields.linkName,
-                path: `/history/${item.fields.id}`
+                name: item.fields.linkName as string,
+                path: `/history/${item.fields.id as string}`
             }));
         },
     });
 
-    const { data: download , error } = useQuery({
+    const { data: download } = useQuery({
         queryKey: ["file"],
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "file" });
 
             // Дістаємо URL першого файлу, якщо він є
-            const fileUrl = response.includes?.Asset[0]?.fields?.file?.url;
+            const fileUrl = response.includes?.Asset?.[0]?.fields?.file?.url;
             return fileUrl ? `https:${fileUrl}` : null;
         },
     });
 
-    const { data: registr  } = useQuery({
+    const { data: registr } = useQuery({
         queryKey: ["registr"],
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "registr" });
-            return response.items[0].fields.form
+            return response.items[0].fields.form as string;
         },
     });
 
-    console.log(registr)
-
-    const textData = [
+    const textData: MenuItem[] = [
         { name: "Головна", path: "/" },
         {
             name: "Комітети",
+            path: null,
             items: [
                 { name: "Керівничий склад", path: "/management-team" },
                 { name: "Програмний комітет", path: "/program-comittee" },
@@ -53,35 +60,38 @@ export default function Menu() {
         },
         {
             name: "Історія конференцій",
+            path: null,
             items: [
                 { name: "Історія", path: "/history", items: isLoading ? [] : titles },
                 { name: "Фундатори", path: "/history/funders" },
             ],
         },
         { name: "Тематичні напрямки", path: "/thematic-directions" },
-        { name: "Реєстрація", path: registr },
         {
             name: "Вимоги до публікацій",
+            path: null,
             items: [
                 { name: " Інформаційні партнери", path: "/info-partners" },
                 { name: "Вимоги до оформлення тез", path: "/requirements-theses" },
-                { name: "Збірник TERMM-2023", path: download, download: true },
+                { name: "Збірник TERMM-2023", path: download ?? null, download: true },
             ],
         },
-        { name: "Платіжна інформація", path: "/pay-info" },
-        { name: "Важливі дати", path: "/important-dates" },
         { name: "Конференційні програми", path: "/conference-program" },
+        { name: "Важливі дати", path: "/important-dates" },
+        { name: "Платіжна інформація", path: "/pay-info" },
+        { name: "Реєстрація", path: registr ?? null },
     ];
 
     return (
-        <nav className="bg-[#3b3c93] p-4 relative">
+        <nav className="bg-[#3b3c93] z-20 p-4 relative">
             <button
                 className="text-white text-3xl md:hidden"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
                 {mobileMenuOpen ? <IoClose /> : <IoMenu />}
             </button>
-            <ul className="hidden md:flex items-center justify-between px-10 text-white">
+            <ul className="hidden md:flex items-center justify-between px-1
+             text-white">
                 {textData.map((item, index) => (
                     <li
                         key={index}
@@ -90,11 +100,11 @@ export default function Menu() {
                         onMouseLeave={() => setOpenMenu(null)}
                     >
                         {!item.items ? (
-                            <Link to={item.path} className="xl:text-[16px]   md:text-[12px]   relative">
+                            <Link to={item.path ?? "#"} className="xl:text-[16px] md:text-[12px] relative">
                                 {item.name}
                             </Link>
                         ) : (
-                            <span className="xl:text-[16px] md:text-[12px]   cursor-pointer">{item.name}</span>
+                            <span className="xl:text-[16px] md:text-[12px] cursor-pointer">{item.name}</span>
                         )}
 
                         {item.items && openMenu === index && (
@@ -108,14 +118,14 @@ export default function Menu() {
                                     >
                                         {subItem.download ? (
                                             <a
-                                                href={subItem.path}
+                                                href={subItem.path ?? "#"}
                                                 download
                                                 className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]"
                                             >
                                                 {subItem.name}
                                             </a>
                                         ) : (
-                                            <Link to={subItem.path} className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]">
+                                            <Link to={subItem.path ?? "#"} className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]">
                                                 {subItem.name}
                                             </Link>
                                         )}
@@ -124,7 +134,7 @@ export default function Menu() {
                                                 {subItem.items.map((nestedItem, nestedIndex) => (
                                                     <Link
                                                         key={nestedIndex}
-                                                        to={nestedItem.path}
+                                                        to={nestedItem.path ?? "#"}
                                                         className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]"
                                                     >
                                                         {nestedItem.name}
@@ -145,7 +155,7 @@ export default function Menu() {
                     {textData.map((item, index) => (
                         <li key={index} className="border-b border-white py-2">
                             {!item.items ? (
-                                <Link to={item.path} onClick={() => setMobileMenuOpen(false)}>
+                                <Link to={item.path ?? "#"} onClick={() => setMobileMenuOpen(false)}>
                                     {item.name}
                                 </Link>
                             ) : (
@@ -159,14 +169,14 @@ export default function Menu() {
                                                 <li key={subIndex} className="py-1">
                                                     {subItem.download ? (
                                                         <a
-                                                            href={subItem.path}
+                                                            href={subItem.path ?? "#"}
                                                             download
                                                             className="px-4 py-1 block hover:bg-yellow-400 hover:text-[#3b3c93]"
                                                         >
                                                             {subItem.name}
                                                         </a>
                                                     ) : (
-                                                        <Link to={subItem.path} onClick={() => setMobileMenuOpen(false)}>
+                                                        <Link to={subItem.path ?? "#"} onClick={() => setMobileMenuOpen(false)}>
                                                             {subItem.name}
                                                         </Link>
                                                     )}
@@ -174,7 +184,7 @@ export default function Menu() {
                                                         <ul className="pl-4">
                                                             {subItem.items.map((nestedItem, nestedIndex) => (
                                                                 <li key={nestedIndex} className="py-1">
-                                                                    <Link to={nestedItem.path} onClick={() => setMobileMenuOpen(false)}>
+                                                                    <Link to={nestedItem.path ?? "#"} onClick={() => setMobileMenuOpen(false)}>
                                                                         {nestedItem.name}
                                                                     </Link>
                                                                 </li>

@@ -2,6 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import client from "../../../contentfulClient.tsx";
 import Loader from "../Loading.tsx";
 
+interface Asset {
+    sys: {
+        id: string;
+    };
+    fields: {
+        file: {
+            url: string;
+        };
+    };
+}
+
 const Conferencechair = () => {
     const { data, error, isLoading } = useQuery({
         queryKey: ['Conferencechair'],
@@ -15,11 +26,16 @@ const Conferencechair = () => {
             const assets = response.includes?.Asset || [];
 
             return conferenceChairs.map(chair => {
-                const photoId = chair.fields.photo?.[0]?.sys?.id;
+                // Перевірка, чи photo є масивом типу Asset
+                const photoId = Array.isArray(chair.fields.photo) && chair.fields.photo.length > 0
+                && (chair.fields.photo[0] as Asset).sys
+                    ? (chair.fields.photo[0] as Asset).sys.id
+                    : undefined;
+
                 const asset = assets.find(asset => asset.sys.id === photoId);
                 return {
-                    name: chair.fields.pib,
-                    specialization: chair.fields.description,
+                    name: chair.fields.pib || '',
+                    specialization: chair.fields.description || '',
                     photo: asset?.fields?.file?.url ? `https:${asset.fields.file.url}` : null
                 };
             });
@@ -29,7 +45,7 @@ const Conferencechair = () => {
     if (isLoading) return <Loader />;
     if (error) return <div>Error: {error.message}</div>;
 
-    console.log(data)
+    console.log(data);
 
     return (
         <div className="flex flex-wrap justify-center items-center space-y-8">
@@ -40,7 +56,7 @@ const Conferencechair = () => {
                         {member.photo ? (
                             <img
                                 src={member.photo}
-                                alt={member.name}
+                                alt={typeof member.name === 'string' ? member.name : 'No name'}
                                 className="w-[300px] h-[450px] object-cover shadow-lg"
                             />
                         ) : (
@@ -48,8 +64,8 @@ const Conferencechair = () => {
                                 <span>Фото відсутнє</span>
                             </div>
                         )}
-                        <p className="text-[22px] mt-5">{member.name}</p>
-                        <p className="text-[18px] mt-3 w-[80%] text-center">{member.specialization}</p>
+                        <p className="text-[22px] mt-5">{typeof member.name === 'string' ? member.name : ''}</p>
+                        <p className="text-[18px] mt-3 w-[80%] text-center">{typeof member.specialization === 'string' ? member.specialization : ''}</p>
                     </div>
                 ))}
             </div>

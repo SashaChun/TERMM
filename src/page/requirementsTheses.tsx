@@ -5,10 +5,21 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loading.tsx";
 import Line from "../components/Line.tsx";
 import StryctureTez from "../components/requirementsThesesComponents/stryctureTez.tsx";
+import { EntryCollection, EntrySkeletonType } from "contentful";
+
+interface RequirementFields {
+    textRule: string[];
+}
+
+interface RequirementEntry extends EntrySkeletonType {
+    fields: RequirementFields;
+}
 
 const RequirementsTheses = () => {
     const fetchThematicDirections = async () => {
-        const response = await client.getEntries({ content_type: "requirementsForAbstractDesign" });
+        const response: EntryCollection<RequirementEntry> = await client.getEntries({
+            content_type: "requirementsForAbstractDesign"
+        });
         return response.items;
     };
 
@@ -20,8 +31,8 @@ const RequirementsTheses = () => {
     if (isLoading) return <Loader />;
     if (error instanceof Error) return <div>Помилка: {error.message}</div>;
 
-    const respFilter = directions?.flatMap(event => event.fields.textRule) ?? [];
-console.log(directions);
+    const respFilter = directions?.flatMap(event => (event.fields as unknown as RequirementFields).textRule) ?? [];
+
     return (
         <div className="flex justify-center px-4 sm:px-0">
             <ContentPlace>
@@ -31,7 +42,7 @@ console.log(directions);
                     </h4>
 
                     <ul className="list-decimal list-outside text-left mt-4 space-y-3">
-                        {respFilter.map((requirement, index) => (
+                        {respFilter.map((requirement: string, index: number) => (
                             <li key={index} className="flex items-start space-x-3">
                                 <BsPen className="w-5 shrink-0 mt-1.5 text-blue-600" />
                                 <div className="flex items-start space-x-2">

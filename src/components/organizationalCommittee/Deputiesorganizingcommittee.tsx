@@ -8,11 +8,14 @@ const Deputiesorganizingcommittee = () => {
             const response = await client.getEntries({ content_type: "Deputiesorganizingcommittee" });
             const deputies = response.items.map((item: any) => {
                 const deputy = item.fields;
-                const photoAsset = response.includes.Asset.find((asset: any) => asset.sys.id === deputy.photo[0].sys.id);
+
+                // Перевірка наявності response.includes та photoAsset
+                const photoAsset = response.includes?.Asset?.find((asset: any) => asset.sys.id === deputy.photo[0]?.sys?.id);
+
                 return {
                     name: deputy.pib,
                     email: deputy.email,
-                    photoUrl: photoAsset.fields.file.url,
+                    photoUrl: photoAsset?.fields?.file?.url || "default-photo-url", // Використовувати URL за замовчуванням, якщо photoAsset не знайдено
                 };
             });
             return deputies;
@@ -20,7 +23,7 @@ const Deputiesorganizingcommittee = () => {
     });
 
     if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    if (error instanceof Error) return <div>Error: {error.message}</div>;
 
     return (
         <div>

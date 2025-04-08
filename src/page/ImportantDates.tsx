@@ -8,7 +8,7 @@ const ImportantDates = () => {
         <div className="flex justify-center">
             <ContentPlace>
                 <section className={'text-[#212529]'}>
-                   <Reglament/>
+                    <Reglament/>
                     <ImportantDatas/>
                 </section>
             </ContentPlace>

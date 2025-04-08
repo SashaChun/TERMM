@@ -1,47 +1,95 @@
+import { useQuery } from "@tanstack/react-query";
 import client from "../../../contentfulClient.tsx";
-import {useQuery} from "@tanstack/react-query";
 import Loader from "../Loading.tsx";
-import {BsPen} from "react-icons/bs";
-import Line from "../Line.tsx";
 
-const StryctureTez = () => {
+// Типізація для об'єкта члена конференції
+type ConferenceChair = {
+    name: string;
+    specialization: string;
+    photo: string | null;
+};
 
-    const fetchThematicDirections = async () => {
-        const response = await client.getEntries({ content_type: "strystyretEz" });
-        return response.items;
+// Типізація для Asset з Contentful
+type Asset = {
+    sys: { id: string };
+    fields: { file?: { url: string } | null };
+};
+
+// Типізація для Entry з Contentful
+type ChairEntry = {
+    sys: { id: string };
+    fields: {
+        pib: string;
+        description: string;
+        photo?: Array<{ sys: { id: string } }> | undefined;
     };
+};
 
-    const { data: directions, isLoading, error } = useQuery({
-        queryKey: ["strystyretEz"],
-        queryFn: fetchThematicDirections,
+const Conferencechair = () => {
+    const { data, error, isLoading } = useQuery<ConferenceChair[], Error>({
+        queryKey: ['Conferencechair'],
+        queryFn: async () => {
+            // @ts-ignore
+            const response = await client.getEntries<ChairEntry>({
+                content_type: "ConferenceCoChairs"
+            });
+
+            if (!response.items || response.items.length === 0) return [];
+
+            const conferenceChairs: ConferenceChair[] = response.items.map((item) => {
+                const fields = item.fields;
+
+                // Перевірка на наявність photoId
+                // @ts-ignore
+                const photoId = fields?.photo?.[0]?.sys?.id;
+
+                // Перевірка, чи є response.includes та Asset, перед використанням
+                const asset = photoId
+                    ? response.includes?.Asset?.find((asset: Asset) => asset.sys.id === photoId)
+                    : null;
+
+                return {
+                    name: fields?.pib ?? "",
+                    specialization: fields?.description ?? "",
+                    photo: asset?.fields?.file?.url ? `https:${asset.fields.file.url}` : null
+                };
+            });
+
+            return conferenceChairs;
+        },
     });
 
     if (isLoading) return <Loader />;
-    if (error instanceof Error) return <div>Помилка: {error.message}</div>;
+    if (error) return <div>Error: {error.message}</div>;
 
-    const respFilter = directions?.flatMap(event => event.fields.textRule) ?? [];
-    console.log(directions);
+    return (
+        <div className="flex flex-wrap justify-center items-center space-y-8">
+            <h1 className="text-[28px] text-center w-full">Голова конференції</h1>
+            <div className="flex flex-wrap justify-center gap-10">
+                {data && data.length > 0 ? (
+                    data.map((member: ConferenceChair, index: number) => (
+                        <div key={index} className="flex flex-col items-center text-center max-w-[350px]">
+                            {member.photo ? (
+                                <img
+                                    src={member.photo}
+                                    alt={member.name}
+                                    className="w-[300px] h-[450px] object-cover shadow-lg"
+                                />
+                            ) : (
+                                <div className="w-[300px] h-[450px] bg-gray-200 flex items-center justify-center">
+                                    <span>Фото відсутнє</span>
+                                </div>
+                            )}
+                            <p className="text-[22px] mt-5">{member.name}</p>
+                            <p className="text-[18px] mt-3 w-[80%] text-center">{member.specialization}</p>
+                        </div>
+                    ))
+                ) : (
+                    <div>Немає доступних даних</div>
+                )}
+            </div>
+        </div>
+    );
+};
 
-    return <div>
-        <h4 className="text-[18px] sm:text-[23px] mt-2 font-semibold text-[#212529]">
-            Структура тез
-        </h4>
-        <ul className="list-decimal list-outside text-left mt-4 space-y-3">
-            {respFilter.map((requirement, index) => (
-                <li key={index} className="flex items-start space-x-3">
-                    <BsPen className="w-5 shrink-0 mt-1.5 text-blue-600"/>
-                    <div className="flex items-start space-x-2">
-                        <span className="text-gray-700">{index + 1}.</span>
-                        <p className="text-[#212529] text-[16px] sm:text-[18px]">{requirement}</p>
-                    </div>
-                </li>
-            ))}
-        </ul>
-        <Line/>
-        <p className={'text-black font-bold text-[20px]'}> {directions[0].fields.name}</p>
-        <p className={'text-blue-700 font-bold text-[20px]'}>E-mail: {directions[0].fields.email}</p>
-        <p className={'text-[#212529] font-bold text-[20px]'}> т. : {directions[0].fields.phone}</p>
-    </div>
-}
-
-export default StryctureTez;
+export default Conferencechair;
