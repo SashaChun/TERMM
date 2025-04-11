@@ -51,6 +51,7 @@ const MainPage = () => {
 
 
     return (
+
         <>
             <main className="flex flex-col justify-center  items-center">
 
@@ -72,7 +73,8 @@ const MainPage = () => {
                         <hr className="w-full border-t border-gray-300 my-10"/>
                         <Place place={place || []}/>
                         <div className={'mt-10 space-y-10'}>
-                           <Map/>
+                           <Map  lng={data && data[0].cord1.lon} lat={data && data[0].cord1.lat}/>
+                            <Map  lng={data && data[0].cord2.lon} lat={data && data[0].cord2.lat}/>
                         </div>
                         <Line/>
                         <div

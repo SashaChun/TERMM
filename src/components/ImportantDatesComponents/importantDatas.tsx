@@ -37,30 +37,22 @@ const ImportantDatas = () => {
     return (
         <div>
             <div>
-                <p className="mt-5 text-[18px] font-bold font-[inherit]">
-                    І. Для учасників, що планують прийняти участь в роботі конференції в дистанційному режимі :
+                <p className="mt-5 text-[18px] text-center font-bold font-[inherit]">
+                    ВАЖЛИВІ Дати :
                 </p>
-                <ul className="list-disc pl-10 space-y-2">
-                    // Ігнорування помилки типізації на конкретному рядку
-                    // @ts-ignore
-                    {data && data.length > 0 && data[0]?.legalentities?.map((event: string, index: number) => (
-                        <div key={index}>{event}</div>
-                    ))}
+                <ul className="list-disc mt-5 pl-10 space-y-2">
+                    {Array.isArray(data?.[0]?.legalentities) ? (
+                        data[0].legalentities.map((item: string, index: number) => (
+                            <li key={index} className="flex items-center space-x-2">
+                                <CiCalendar className="text-[25px] text-blue-800"/>
+                                <p className="text-[18px]">{item}</p>
+                            </li>
+                        ))
+                    ) : (
+                        <li className="text-gray-500">Немає даних</li>
+                    )}
 
 
-                </ul>
-            </div>
-            <div>
-                <p className="mt-5 text-[18px] font-bold font-[inherit]">
-                    ІІ. Для учасників, що планують прийняти особисту участь в роботі конференції:
-                </p>
-                <ul className="list-disc pl-10 space-y-2">
-                    {data && data[0]?.individuals?.map((event: string, index: number) => (
-                        <li key={index} className="flex items-center">
-                            <CiCalendar className="text-[25px] text-blue-800" />
-                            <p className="text-[18px]">{event}</p>
-                        </li>
-                    ))}
                 </ul>
             </div>
         </div>

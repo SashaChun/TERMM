@@ -16,21 +16,32 @@ const HistoryPage = () => {
     const location = useLocation();
     const segments = location.pathname.split("/").filter(Boolean);
     const lastSegment = segments[segments.length - 1]; // last segment of URL
-
     const { data, error, isLoading } = useQuery<Conference[]>({
         queryKey: ['historys'],
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "history" });
-            return response.items.map(item => ({
-                fields: {
-                    id: item.fields.id,
-                    title: item.fields.title,
-                    data: item.fields.data,
-                    photo: item.fields.photo || []
-                }
-            })) as Conference[];
+
+            const assets = response.includes?.Asset || [];
+
+            return response.items.map(item => {
+                const videoAssetId = item.fields.videolink?.sys?.id;
+
+                const videoAsset = assets.find(asset => asset.sys.id === videoAssetId);
+                const videolink = videoAsset ? `https:${videoAsset.fields.file.url}` : "";
+
+                return {
+                    fields: {
+                        id: item.fields.id,
+                        title: item.fields.title,
+                        data: item.fields.data,
+                        photo: item.fields.photo || [],
+                        videolink : videolink,
+                    }
+                };
+            }) as Conference[];
         },
     });
+
 
     if (isLoading) return <div>Завантаження...</div>;
     if (error instanceof Error) return <div>Не вдалося завантажити дані: {error.message}</div>;
@@ -53,6 +64,8 @@ const HistoryPage = () => {
     });
 
     const resp = descriptions.length > 0 ? descriptions[0] : null; // Check for data presence
+
+    console.log(data)
 
     return (
         <div className="flex justify-center">

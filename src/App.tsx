@@ -9,7 +9,7 @@ const MainPage = lazy(() => import('./page/MainPage'));
 const ManagementTeam = lazy(() => import('./page/managementTeam'));
 const ProgramComittee = lazy(() => import('./page/programComittee'));
 const OrganizationalCommittee = lazy(() => import('./page/organizationalCommittee'));
-const HisrtoryPage = lazy(() => import("./page/historyPge"));
+const HisrtoryPage = lazy(() => import("./page/historyPge.tsx"));
 const ThematicDirections = lazy(() => import("./page/thematicDirections"));
 const Funders = lazy(() => import("./page/Funders"));
 const InfoPartners = lazy(() => import("./page/infoPartners"));

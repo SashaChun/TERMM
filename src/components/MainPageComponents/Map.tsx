@@ -13,12 +13,12 @@ L.Icon.Default.mergeOptions({
 });
 
 interface MapProps {
-    lat?: number;
-    lng?: number;
+    lat: number;
+    lng: number;
 }
 
-const Map: FC<MapProps> = ({ lat = 50.4501, lng = 30.5236 }) => {
-    // Встановлюємо фейкові координати, якщо не передано значення lat та lng
+const Map: FC<MapProps> = ({lat, lng}) => {
+    // Встановлюємо координати, передані в якості пропсів
     const coordinates: [number, number] = [lat, lng];
 
     return (
@@ -42,5 +42,3 @@ const Map: FC<MapProps> = ({ lat = 50.4501, lng = 30.5236 }) => {
         </div>
     );
 };
-
-export default Map;
