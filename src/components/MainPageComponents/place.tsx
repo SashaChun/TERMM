@@ -12,7 +12,7 @@ interface PlaceProps {
     place: { item: string } | { item: string }[] | { item: string }[][];
 }
 
-const Place = ({ place }: PlaceProps) => {
+const Place = ({place}: PlaceProps) => {
     console.log(place);  // Перевірка структури даних
 
     // Розпакування масиву, якщо він містить внутрішній масив
@@ -28,12 +28,12 @@ const Place = ({ place }: PlaceProps) => {
                     placesToRender.map((event, index) => (
                         <p className="mt-2" key={index}>
                             <Linkify componentDecorator={linkDecorator}>
-                                {event.item}
+                                {"item" in event ? event.item : ""}
                             </Linkify>
                         </p>
                     ))
                 ) : (
-                    <p>{placesToRender.item}</p>  // Якщо place не масив, вивести одиничне значення
+                    <p>{placesToRender && "item" in placesToRender ? placesToRender.item : ""}</p>
                 )}
             </div>
         </div>

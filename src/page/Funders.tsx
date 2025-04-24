@@ -5,7 +5,7 @@ import Loader from "../components/Loading.tsx";
 import Line from '../components/Line.tsx'
 
 export default function Funders() {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading } = useQuery({  
         queryKey: ['Firstfundators'],
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "Firstfundators" });

@@ -14,6 +14,7 @@ interface Organizer {
 const OrganizationalCommittee = () => {
     const { data, error, isLoading } = useQuery<Organizer[]>({
         queryKey: ["orcomitet"],
+        //ts-ignore
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "orcomitet" });
 
@@ -34,12 +35,12 @@ const OrganizationalCommittee = () => {
                     imageUrl: imageFile ? `https:${imageFile}` : null,
                     phone: typeof fields.phone === "string" ? fields.phone : null,
                     email: typeof fields.email === "string" ? fields.email : null,
-                };
+                    number: null, // ← додай сюди або спробуй щось з item.fields.number
+                };                
             });
         },
     });
-
-    console.log(data && data[0]);
+//ts-ignore
     if (isLoading) return <p className="text-center">Завантаження...</p>;
     if (error) return <p className="text-center text-red-600">Помилка: {error.message}</p>;
 

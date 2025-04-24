@@ -1,11 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import client from "../../../contentfulClient.tsx";
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../../store/languageSlice.ts';
 
 const MainFunders = () => {
+    const lng = useSelector(selectLanguage);
+    console.log(lng);
+
     const { data, error, isLoading } = useQuery({
-        queryKey: ['Firstfundators'],
+        queryKey: ['Firstfundators' , lng],
         queryFn: async () => {
-            const response = await client.getEntries({ content_type: "Firstfundators" });
+            const response = await client.getEntries({ content_type: "Firstfundators" , locale: lng });
             return response;
         },
     });

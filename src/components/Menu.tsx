@@ -3,8 +3,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import client from "../../contentfulClient.tsx";
 import { IoMenu, IoClose } from "react-icons/io5";
-
-// Типізація для елементів меню
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../store/languageSlice';
+ 
 type MenuItem = {
     name: string;
     path: string | null;
@@ -16,6 +17,7 @@ export default function Menu() {
     const [openMenu, setOpenMenu] = useState<number | null>(null);
     const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const lng = useSelector(selectLanguage); 
 
     const { data: titles = [], isLoading } = useQuery({
         queryKey: ["history"],
@@ -27,18 +29,16 @@ export default function Menu() {
             }));
         },
     });
-
+ 
     const { data: download } = useQuery({
         queryKey: ["file"],
         queryFn: async () => {
             const response = await client.getEntries({ content_type: "file" });
-
-            // Дістаємо URL першого файлу, якщо він є
             const fileUrl = response.includes?.Asset?.[0]?.fields?.file?.url;
             return fileUrl ? `https:${fileUrl}` : null;
         },
     });
-
+ 
     const { data: registr } = useQuery({
         queryKey: ["registr"],
         queryFn: async () => {
@@ -46,11 +46,53 @@ export default function Menu() {
             return response.items[0].fields.form as string;
         },
     });
+ 
+    type MenuText = {
+        home: string;
+        committees: string;
+        history: string;
+        thematic: string;
+        requirements: string;
+        programs: string;
+        dates: string;
+        paymentInfo: string;
+        registration: string;
+    };
+    
+    type MenuTexts = {
+        [key: string]: MenuText;
+    };
+    
+    const menuText: MenuTexts = {
+        "uk": {
+            home: "Головна",
+            committees: "Комітети",
+            history: "Історія конференцій",
+            thematic: "Тематичні напрямки",
+            requirements: "Вимоги до публікацій",
+            programs: "Конференційні програми",
+            dates: "Важливі дати",
+            paymentInfo: "Платіжна інформація",
+            registration: "Реєстрація"
+        },
+        "en-US": {
+            home: "Home",
+            committees: "Committees",
+            history: "Conference History",
+            thematic: "Thematic Directions",
+            requirements: "Publication Requirements",
+            programs: "Conference Programs",
+            dates: "Important Dates",
+            paymentInfo: "Payment Information",
+            registration: "Registration"
+        }
+    };
+    
 
     const textData: MenuItem[] = [
-        { name: "Головна", path: "/" },
+        { name: menuText[lng].home, path: "/" },
         {
-            name: "Комітети",
+            name: menuText[lng].committees,
             path: null,
             items: [
                 { name: "Керівничий склад", path: "/management-team" },
@@ -59,16 +101,16 @@ export default function Menu() {
             ],
         },
         {
-            name: "Історія конференцій",
+            name: menuText[lng].history,
             path: null,
             items: [
-                { name: "Історія", path: "/history", items: isLoading ? [] : titles },
+                { name: menuText[lng].history, path: "/history", items: isLoading ? [] : titles },
                 { name: "Фундатори", path: "/history/funders" },
             ],
         },
-        { name: "Тематичні напрямки", path: "/thematic-directions" },
+        { name: menuText[lng].thematic, path: "/thematic-directions" },
         {
-            name: "Вимоги до публікацій",
+            name: menuText[lng].requirements,
             path: null,
             items: [
                 { name: " Інформаційні партнери", path: "/info-partners" },
@@ -76,10 +118,10 @@ export default function Menu() {
                 { name: "Збірник TERMM-2023", path: download ?? null, download: true },
             ],
         },
-        { name: "Конференційні програми", path: "/conference-program" },
-        { name: "Важливі дати", path: "/important-dates" },
-        { name: "Платіжна інформація", path: "/pay-info" },
-        { name: "Реєстрація", path: registr ?? null },
+        { name: menuText[lng].programs, path: "/conference-program" },
+        { name: menuText[lng].dates, path: "/important-dates" },
+        { name: menuText[lng].paymentInfo, path: "/pay-info" },
+        { name: menuText[lng].registration, path: registr ?? null },
     ];
 
     return (
@@ -90,8 +132,7 @@ export default function Menu() {
             >
                 {mobileMenuOpen ? <IoClose /> : <IoMenu />}
             </button>
-            <ul className="hidden md:flex items-center justify-between px-1
-             text-white">
+            <ul className="hidden md:flex items-center justify-between px-1 text-white">
                 {textData.map((item, index) => (
                     <li
                         key={index}

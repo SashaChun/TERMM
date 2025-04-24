@@ -1,10 +1,12 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import {MapContainer, TileLayer, Marker, Popup} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { FC } from "react";
+import {FC} from "react";
 
 // Фікс іконок Leaflet, інакше вони не показуються
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+if ('_getIconUrl' in L.Icon.Default.prototype) {
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+}
 L.Icon.Default.mergeOptions({
     iconRetinaUrl:
         "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
@@ -42,3 +44,5 @@ const Map: FC<MapProps> = ({lat, lng}) => {
         </div>
     );
 };
+
+export default Map;

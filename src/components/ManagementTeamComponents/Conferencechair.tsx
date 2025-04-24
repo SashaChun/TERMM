@@ -15,42 +15,50 @@ interface Asset {
 
 const Conferencechair = () => {
     const { data, error, isLoading } = useQuery({
-        queryKey: ['Conferencechair'],
+        queryKey: ['Conferencechair' ],
         queryFn: async () => {
-            const response = await client.getEntries({ content_type: "ConferenceCoChairs" });
+            const response = await client.getEntries({ 
+                content_type: "ConferenceCoChairs", 
 
-            // Переконаємось, що є потрібні дані
+            });
+            console.log(response);
             if (!response.items || response.items.length === 0) return [];
-
+    
             const conferenceChairs = response.items;
-            const assets = response.includes?.Asset || [];
 
-            return conferenceChairs.map(chair => {
-                // Перевірка, чи photo є масивом типу Asset
-                const photoId = Array.isArray(chair.fields.photo) && chair.fields.photo.length > 0
-                && (chair.fields.photo[0] as Asset).sys
-                    ? (chair.fields.photo[0] as Asset).sys.id
-                    : undefined;
-
-                const asset = assets.find(asset => asset.sys.id === photoId);
+            return conferenceChairs.map(chair => { 
+                const photoField = Array.isArray(chair.fields.photo) ? chair.fields.photo[0] as Asset : null;
+    
+                // Якщо фото є, ми беремо його. Якщо ні, пробуємо знайти його для англійської мови.
+                const photo = photoField?.fields?.file?.url ? `https:${photoField.fields.file.url}` : null;
+                if (!photo  ) {
+                    // Якщо фото немає для української, використовуємо фото для англійської.
+                    const fallbackPhoto = conferenceChairs.find(ch => ch.fields.pib === chair.fields.pib); // знайдемо інший запис з таким самим ПІБ для англійської
+                    const fallbackPhotoField = Array.isArray(fallbackPhoto?.fields.photo) ? fallbackPhoto?.fields.photo[0] as Asset : null;
+                    return {
+                        name: chair.fields.pib || '',
+                        specialization: chair.fields.description || '',
+                        photo: fallbackPhotoField?.fields?.file?.url ? `https:${fallbackPhotoField.fields.file.url}` : null
+                    };
+                }
+    
                 return {
                     name: chair.fields.pib || '',
                     specialization: chair.fields.description || '',
-                    photo: asset?.fields?.file?.url ? `https:${asset.fields.file.url}` : null
+                    photo: photo
                 };
             });
         },
     });
-
+    
     if (isLoading) return <Loader />;
     if (error) return <div>Error: {error.message}</div>;
 
     console.log(data);
 
     return (
-        <div className="flex flex-wrap justify-center items-center space-y-8">
-            <h1 className="text-[28px] text-center w-full">Голова конференції</h1>
-            <div className="flex flex-wrap justify-center gap-10">
+        <div className="flex flex-wrap justify-center items-center space-y-8"> 
+            <div className="flex mt-10 flex-wrap justify-center gap-10">
                 {data?.map((member, index) => (
                     <div key={index} className="flex flex-col items-center text-center max-w-[350px]">
                         {member.photo ? (

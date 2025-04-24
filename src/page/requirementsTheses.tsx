@@ -4,7 +4,7 @@ import { BsPen } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loading.tsx";
 import Line from "../components/Line.tsx";
-import StryctureTez from "../components/requirementsThesesComponents/stryctureTez.tsx";
+
 import { EntryCollection, EntrySkeletonType } from "contentful";
 
 interface RequirementFields {
@@ -53,7 +53,6 @@ const RequirementsTheses = () => {
                         ))}
                     </ul>
                     <Line/>
-                    <StryctureTez/>
                 </section>
             </ContentPlace>
         </div>
